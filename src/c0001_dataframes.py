@@ -2,9 +2,11 @@ import pandas as pd
 
 
 def print_df(df):
-    print(df)
-    print(df.shape)
-    print(df.describe())
+    print(f"DataFrame: \n{df}")
+    print(f"DataFrame Shape: \n{df.shape}")
+    print(f"DataFrame Describe: \n{df.describe()}")
+    print(f"DataFrame Columns: \n{df.columns}")
+    print(f"DataFrame Index: \n{df.index}")
 
 
 def create_dataframe_from_dict():
@@ -25,7 +27,7 @@ def main():
     df = create_dataframe_from_dict()
     print_df(df)
     df1 = create_dataframe_from_dict_of_dict()
-    print(df1)
+    print_df(df1)
 
 
 if __name__ == '__main__':
