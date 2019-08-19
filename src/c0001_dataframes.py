@@ -52,13 +52,22 @@ def sort_df(df, list_columns, list_bool_ascending):
     :return:
 
     """
-    # Make a copy of DataFrame to avoid any mis-references.
-    df_tmp = df.copy()
-    df_tmp.sort_values(by=list_columns, ascending=list_bool_ascending, inplace=True)
+    df.sort_values(by=list_columns, ascending=list_bool_ascending, inplace=True)
 
     # Other way
-    # df_tmp = df.sort_values(by=list_columns, ascending=list_bool_ascending)
+    df_tmp = df.sort_values(by=list_columns, ascending=list_bool_ascending)
     return df_tmp
+
+
+def copy_df(df):
+    """
+    Copy a DataFrame and return a new reference to DataFrame having values same as the old one.
+    :param df:
+    :return:
+    """
+
+    # Useful to keep a copy of DataFrame to avoid any mis-references.
+    df_tmp = df.copy()
 
 
 def df_reset_index(df):
