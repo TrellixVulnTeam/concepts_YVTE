@@ -10,9 +10,14 @@ from numpy import mean
 from numpy import std
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import cross_val_score, RepeatedStratifiedKFold
-from imblearn.metrics import geometric_mean_score
-from sklearn.metrics import make_scorer
 from sklearn.dummy import DummyClassifier
+from sklearn.metrics import make_scorer
+from sklearn.linear_model import LogisticRegression
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.naive_bayes import GaussianNB
+from imblearn.metrics import geometric_mean_score
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 
 
 def plot_hist(df):
@@ -89,6 +94,35 @@ def dummy_classifier(X, y):
     print('Mean G-Mean: %.3f (%.3f)' % (mean(scores), std(scores)))
 
 
+def get_models():
+    # define models
+    models, names, results = list(), list(), list()
+    # LR
+    models.append(Pipeline(steps=[('t', StandardScaler()), ('m', LogisticRegression(solver='liblinear'))]))
+    names.append('LR')
+    # LDA
+    models.append(Pipeline(steps=[('t', StandardScaler()), ('m', LinearDiscriminantAnalysis())]))
+    names.append('LDA')
+    # NB
+    models.append(GaussianNB())
+    names.append('NB')
+
+    return models, names, results
+
+
+def eval_models(models, names, results, X, y):
+    # evaluate each model
+    for i in range(len(models)):
+        # evaluate the model and store results
+        scores = evaluate_model(X, y, models[i])
+        results.append(scores)
+        # summarize and store
+        print('> %s %.3f (%.3f)' % (names[i], mean(scores), std(scores)))
+    # plot the results
+    plt.boxplot(results, labels=names, showmeans=True)
+    plt.show()
+
+
 def main():
     file_path = f"../data/oil_spill/oil-spill.csv"
     # df = read_data(file_path)
@@ -97,6 +131,9 @@ def main():
 
     X, y = load_dataset(file_path)
     dummy_classifier(X, y)
+
+    models, names, results = get_models()
+    eval_models(models, names, results, X, y)
 
 
 if __name__ == '__main__':
