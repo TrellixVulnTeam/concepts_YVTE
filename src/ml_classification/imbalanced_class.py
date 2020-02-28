@@ -6,18 +6,22 @@ Ref: https://machinelearningmastery.com/imbalanced-classification-model-to-detec
 import pandas as pd
 from matplotlib import pyplot as plt
 from collections import Counter
-from numpy import mean
-from numpy import std
-from sklearn.preprocessing import LabelEncoder
+from numpy import mean, std
+
+from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.model_selection import cross_val_score, RepeatedStratifiedKFold
+
+# Import various models
 from sklearn.dummy import DummyClassifier
-from sklearn.metrics import make_scorer
 from sklearn.linear_model import LogisticRegression
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.naive_bayes import GaussianNB
+
+# Metrics for performance
+from sklearn.metrics import make_scorer
 from imblearn.metrics import geometric_mean_score
+
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler
 
 
 def plot_hist(df):
@@ -97,12 +101,17 @@ def dummy_classifier(X, y):
 def get_models():
     # define models
     models, names, results = list(), list(), list()
+
+    # Create pipelines of steps for LR and LDA
+    # Use StandardScaler to apply on train and test data and then fit the model
     # LR
     models.append(Pipeline(steps=[('t', StandardScaler()), ('m', LogisticRegression(solver='liblinear'))]))
     names.append('LR')
+
     # LDA
     models.append(Pipeline(steps=[('t', StandardScaler()), ('m', LinearDiscriminantAnalysis())]))
     names.append('LDA')
+
     # NB
     models.append(GaussianNB())
     names.append('NB')
@@ -113,11 +122,14 @@ def get_models():
 def eval_models(models, names, results, X, y):
     # evaluate each model
     for i in range(len(models)):
+
         # evaluate the model and store results
         scores = evaluate_model(X, y, models[i])
         results.append(scores)
+
         # summarize and store
         print('> %s %.3f (%.3f)' % (names[i], mean(scores), std(scores)))
+
     # plot the results
     plt.boxplot(results, labels=names, showmeans=True)
     plt.show()
