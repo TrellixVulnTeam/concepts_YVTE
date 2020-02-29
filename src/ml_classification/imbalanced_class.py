@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 from collections import Counter
 from numpy import mean, std
 
-from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.preprocessing import LabelEncoder, StandardScaler, MinMaxScaler, PowerTransformer
 from sklearn.model_selection import cross_val_score, RepeatedStratifiedKFold
 
 # Import various models
@@ -98,6 +98,26 @@ def dummy_classifier(X, y):
     print('Mean G-Mean: %.3f (%.3f)' % (mean(scores), std(scores)))
 
 
+def get_improved_LR_models():
+    models, names, results = list(), list(), list()
+    # LR Balanced
+    models.append(LogisticRegression(solver='liblinear', class_weight='balanced'))
+    names.append('Balanced')
+    # LR Balanced + Normalization
+    models.append(
+        Pipeline(steps=[('t', MinMaxScaler()), ('m', LogisticRegression(solver='liblinear', class_weight='balanced'))]))
+    names.append('Balanced-Norm')
+    # LR Balanced + Standardization
+    models.append(Pipeline(
+        steps=[('t', StandardScaler()), ('m', LogisticRegression(solver='liblinear', class_weight='balanced'))]))
+    names.append('Balanced-Std')
+    # LR Balanced  + Power
+    models.append(Pipeline(steps=[('t1', MinMaxScaler()), ('t2', PowerTransformer()),
+                                  ('m', LogisticRegression(solver='liblinear', class_weight='balanced'))]))
+    names.append('Balanced-Power')
+    return models, names, results
+
+
 def get_models():
     # define models
     models, names, results = list(), list(), list()
@@ -145,6 +165,9 @@ def main():
     dummy_classifier(X, y)
 
     models, names, results = get_models()
+    eval_models(models, names, results, X, y)
+
+    models, names, results = get_improved_LR_models()
     eval_models(models, names, results, X, y)
 
 
