@@ -8,8 +8,10 @@ from matplotlib import pyplot as plt
 from collections import Counter
 from numpy import mean, std
 
+# Useful imports for creating preprocessing classes
 from sklearn.preprocessing import LabelEncoder, StandardScaler, MinMaxScaler, PowerTransformer
 from sklearn.model_selection import cross_val_score, RepeatedStratifiedKFold
+from sklearn.pipeline import Pipeline
 
 # Import various models
 from sklearn.dummy import DummyClassifier
@@ -19,9 +21,12 @@ from sklearn.naive_bayes import GaussianNB
 
 # Metrics for performance
 from sklearn.metrics import make_scorer
-from imblearn.metrics import geometric_mean_score
 
-from sklearn.pipeline import Pipeline
+# Imports from imblearn - Special package for Imbalanced Classes
+from imblearn.metrics import geometric_mean_score
+from imblearn.combine import SMOTEENN
+from imblearn.under_sampling import EditedNearestNeighbours
+from imblearn.pipeline import Pipeline as imb_pipe
 
 
 def plot_hist(df):
@@ -102,19 +107,43 @@ def get_improved_LR_models():
     models, names, results = list(), list(), list()
     # LR Balanced
     models.append(LogisticRegression(solver='liblinear', class_weight='balanced'))
-    names.append('Balanced')
+    names.append('LR - Bal')
     # LR Balanced + Normalization
     models.append(
         Pipeline(steps=[('t', MinMaxScaler()), ('m', LogisticRegression(solver='liblinear', class_weight='balanced'))]))
-    names.append('Balanced-Norm')
+    names.append('LR - Bal - Norm')
     # LR Balanced + Standardization
     models.append(Pipeline(
         steps=[('t', StandardScaler()), ('m', LogisticRegression(solver='liblinear', class_weight='balanced'))]))
-    names.append('Balanced-Std')
+    names.append('LR - Bal - Std')
     # LR Balanced  + Power
     models.append(Pipeline(steps=[('t1', MinMaxScaler()), ('t2', PowerTransformer()),
                                   ('m', LogisticRegression(solver='liblinear', class_weight='balanced'))]))
-    names.append('Balanced-Power')
+    names.append('LR - Bal - Power')
+
+    # SMOTEENN
+    models.append(imb_pipe(steps=[('e', SMOTEENN(enn=EditedNearestNeighbours(sampling_strategy='majority'))),
+                                  ('m', LogisticRegression(solver='liblinear'))]))
+    names.append('LR - SE')
+
+    # SMOTEENN + Norm
+    models.append(imb_pipe(
+        steps=[('t', MinMaxScaler()), ('e', SMOTEENN(enn=EditedNearestNeighbours(sampling_strategy='majority'))),
+               ('m', LogisticRegression(solver='liblinear'))]))
+    names.append('LR - Norm - SE')
+
+    # SMOTEENN + Std
+    models.append(imb_pipe(
+        steps=[('t', StandardScaler()), ('e', SMOTEENN(enn=EditedNearestNeighbours(sampling_strategy='majority'))),
+               ('m', LogisticRegression(solver='liblinear'))]))
+    names.append('LR - Std - SE')
+
+    # SMOTEENN + Power
+    models.append(imb_pipe(steps=[('t1', MinMaxScaler()), ('t2', PowerTransformer()),
+                                  ('e', SMOTEENN(enn=EditedNearestNeighbours(sampling_strategy='majority'))),
+                                  ('m', LogisticRegression(solver='liblinear'))]))
+    names.append('LR - Power - SE')
+
     return models, names, results
 
 
@@ -142,7 +171,6 @@ def get_models():
 def eval_models(models, names, results, X, y):
     # evaluate each model
     for i in range(len(models)):
-
         # evaluate the model and store results
         scores = evaluate_model(X, y, models[i])
         results.append(scores)
@@ -151,7 +179,9 @@ def eval_models(models, names, results, X, y):
         print('> %s %.3f (%.3f)' % (names[i], mean(scores), std(scores)))
 
     # plot the results
-    plt.boxplot(results, labels=names, showmeans=True)
+    plt.boxplot(results, showmeans=True)
+    plt.xticks(list(range(1, len(names)+1)), labels=names, rotation=45)
+
     plt.show()
 
 
@@ -165,9 +195,12 @@ def main():
     dummy_classifier(X, y)
 
     models, names, results = get_models()
-    eval_models(models, names, results, X, y)
+    # eval_models(models, names, results, X, y)
 
-    models, names, results = get_improved_LR_models()
+    m, n, r = get_improved_LR_models()
+    models.extend(m)
+    names.extend(n)
+    results.extend(r)
     eval_models(models, names, results, X, y)
 
 
