@@ -11,7 +11,8 @@ def splitting_into_words(text, **kwargs):
     elif splitter == 'whitespaces':
         words = text.split()
     else:
-        words = text.split('.')
+        # Return sentences
+        words = text.replace('\n', ' ').split('.')
 
     return words
 
@@ -27,7 +28,7 @@ def load_text():
 def preprocess_initial():
     text = load_text()
     words = splitting_into_words(text)
-    words = splitting_into_words(text, splitter='whitespaces')
+    words = splitting_into_words(text, splitter='')
     print(words[:100])
 
 
