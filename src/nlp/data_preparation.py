@@ -20,6 +20,7 @@ def remove_punctuation_from_words(list_words):
 def splitting_into_words(text, **kwargs):
     list_words = []
     splitter = kwargs.get('splitter', 're')
+    lower = kwargs.get('lower', True)
     re_expression = kwargs.get('re_expression', r'\W+')
 
     if splitter == 're':
@@ -29,6 +30,9 @@ def splitting_into_words(text, **kwargs):
     else:
         # Return sentences
         list_words = text.replace('\n', ' ').split('.')
+
+    if lower:
+        list_words = [word.lower() for word in list_words]
 
     return list_words
 
@@ -44,7 +48,7 @@ def load_text():
 def preprocess_initial():
     text = load_text()
     list_words = splitting_into_words(text)
-    list_words = splitting_into_words(text, splitter='')
+    # list_words = splitting_into_words(text, splitter='')
     list_words = remove_punctuation_from_words(list_words)
     list_words = remove_non_printable_from_words(list_words)
     print(list_words[:100])
