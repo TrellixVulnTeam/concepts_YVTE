@@ -6,6 +6,18 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 
 
+"""
+More data cleaning process for some other textual data
+ - Handling large documents and large collections of text documents that do not fit into memory.
+ - Extracting text from markup like HTML, PDF, or other structured document formats.
+ - Transliteration of characters from other languages into English.
+ - Decoding Unicode characters into a normalized form, such as UTF8.
+ - Handling of domain specific words, phrases, and acronyms.
+ - Handling or removing numbers, such as dates and amounts.
+ - Locating and correcting common typos and misspellings.
+
+"""
+
 def nltk_prep_2(list_words):
     # Generally used Porter Stemmer algorithm: https://tartarus.org/martin/PorterStemmer/
     porter_stem = PorterStemmer()
