@@ -69,9 +69,11 @@ def splitting_into_words(text, **kwargs):
         list_words = re.split(re_expression, text)
     elif splitter == 'whitespaces':
         list_words = text.split()
-    else:
+    elif splitter == 'sentences':
         # Return sentences
         list_words = text.replace('\n', ' ').split('.')
+    else:
+        list_words = text.split('\n')
 
     if lower:
         list_words = [word.lower() for word in list_words]
