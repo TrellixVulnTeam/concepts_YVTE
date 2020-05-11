@@ -1,6 +1,36 @@
 import string
 import re
 
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+
+
+def nltk_prep_2(list_words):
+    # Generally used Porter Stemmer algorithm: https://tartarus.org/martin/PorterStemmer/
+    porter_stem = PorterStemmer()
+    word_stem = [porter_stem.stem(word) for word in list_words]
+
+    # Always review the word tokens after doing any operation on textual data - Jason Brownlee
+    print(word_stem[:100])
+    return word_stem
+
+
+def nltk_prep_1(text):
+    # Data preparation using nltk: http://www.nltk.org/book/ch03.html
+    # Splits the long text into words
+    word_tokens = word_tokenize(text)
+    word_lower = [word.lower() for word in word_tokens]
+    re_remove_punctuation = re.compile('[%s]' % re.escape(string.punctuation))
+    word_removed_punctuation = [re_remove_punctuation.sub('', word) for word in word_lower]
+    # Remove non alphabetic words
+    word_alpha = [word for word in word_removed_punctuation if word.isalpha()]
+    stop_words = set(stopwords.words('english'))
+    word_removed_stopwords = [word for word in word_alpha if word not in stop_words]
+
+    print(word_removed_stopwords[:100])
+    return word_removed_stopwords
+
 
 def remove_non_printable_from_words(list_words):
     re_print = re.compile("[^%s]" % re.escape(string.printable))
