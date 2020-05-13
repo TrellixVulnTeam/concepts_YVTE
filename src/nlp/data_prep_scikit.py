@@ -1,9 +1,25 @@
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from nlp import data_prep_nltk  as data_prep
 
 
+def model_tfidf_vectorizer(list_docs):
+    list_docs = ["The quick brown fox jumped over the lazy dog.",
+                 "The dev shree",
+                 "The fox"]
+
+    vectorizer = TfidfVectorizer()
+    vectorizer.fit(list_docs)
+
+    print(vectorizer.vocabulary_)
+    print(vectorizer.idf_)
+
+    for text in list_docs:
+        vector = vectorizer.transform([text])
+        print(vector.shape, vector.toarray())
+
+
 def model_count_vectorizer(list_docs):
-    # text = ["The quick brown fox jumped over the lazy dog."]
+    # list_docs = ["The quick brown fox jumped over the lazy dog."]
     vectorizer = CountVectorizer()
     vectorizer.fit(list_docs)
 
@@ -28,11 +44,13 @@ def load_text():
 def preprocess_initial():
     text = load_text()
     list_sentences = data_prep.splitting_into_words(text, splitter='sentences')
-    model_count_vectorizer(list_sentences)
+    return list_sentences
 
 
 def main():
-    preprocess_initial()
+    list_docs = preprocess_initial()
+    # model_count_vectorizer(list_docs)
+    model_tfidf_vectorizer(list_docs)
     pass
 
 
