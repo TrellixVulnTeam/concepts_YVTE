@@ -1,5 +1,14 @@
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer, HashingVectorizer
 from nlp import data_prep_nltk  as data_prep
+
+
+def model_hashing_vectorizer(list_docs):
+    list_docs = ["The quick brown fox jumped over the lazy dog.", "The dev shree", "The fox"]
+
+    vectorizer = HashingVectorizer(n_features=20)
+    for text in list_docs:
+        vector = vectorizer.transform([text])
+        print(vector.shape, vector.toarray())
 
 
 def model_tfidf_vectorizer(list_docs):
@@ -14,7 +23,7 @@ def model_tfidf_vectorizer(list_docs):
     print(vectorizer.idf_)
 
     for text in list_docs:
-        vector = vectorizer.transform([text])
+        vector = vectorizer.transform(text)
         print(vector.shape, vector.toarray())
 
 
@@ -50,7 +59,8 @@ def preprocess_initial():
 def main():
     list_docs = preprocess_initial()
     # model_count_vectorizer(list_docs)
-    model_tfidf_vectorizer(list_docs)
+    # model_tfidf_vectorizer(list_docs)
+    model_hashing_vectorizer(list_docs)
     pass
 
 
