@@ -14,13 +14,53 @@ More resources:
 
 """
 
+from random import random, seed
 
-def initialize_network():
-    pass
+_ROUND_PRECISION = 3
+_RANDOM_SEED = 1
+seed(_RANDOM_SEED)
 
 
-def forward_propagate():
-    pass
+def print_network(neural_network):
+    """
+    Takes input a list of layers
+    @param neural_network:
+    @return:
+    """
+    for layer in neural_network:
+        print(layer)
+
+
+def initialize_network(n_inputs, n_hidden, n_outputs):
+    """
+    Create an initial network initialized with random weights in range [0, 1].
+    @param n_inputs: feature size
+    @param n_hidden: one hidden layer n_hidden neurons. Each neuron has (n_inputs) training weights and 1 bias weight
+    @param n_outputs: n_output classes. Each output neuron has (n_hidden) weights and 1 bias weight
+    @return:
+    """
+    netowrk = list()
+    # input_layer is just a list of n_inputs values
+    hidden_layer = [{'weights': [round(random(), _ROUND_PRECISION)
+                                 for x in range(n_inputs + 1)]}
+                    for x in range(n_hidden)]
+    netowrk.append(hidden_layer)
+
+    # Create output layer
+    output_layer = [{'weights': [round(random(), _ROUND_PRECISION)
+                                 for x in range(n_hidden + 1)]}
+                    for x in range(n_outputs)]
+    netowrk.append(output_layer)
+    return netowrk
+
+
+def forward_propagate(x, y):
+    """
+
+    @param x:
+    @param y:
+    @return:
+    """
 
 
 def back_propagate_error():
