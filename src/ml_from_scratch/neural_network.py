@@ -55,7 +55,7 @@ def initialize_network(n_inputs, n_hidden, n_outputs):
     return netowrk
 
 
-def activate(weights: list, inputs: list):
+def activate(weights: list, inputs: list, **kwargs):
     """
     This will calculate the dot product of weights and inputs and add a bias value.
     In our case, bias is always assumed to be the last value in the weights list.
@@ -64,13 +64,17 @@ def activate(weights: list, inputs: list):
     @return:
     """
     # Initialize the sum with bias.
-    sum = weights[-1]
-    for i, x_i in inputs:
-        sum += x_i * weights[i]
-    return sum
+    round_precision = kwargs.get("round_precision", _ROUND_PRECISION)
+    activation = weights[-1]
+    for i, x_i in enumerate(inputs):
+        if x_i is not None:
+            activation += x_i * weights[i]
+
+    activation = round(activation, round_precision)
+    return activation
 
 
-def transfer(activation):
+def transfer(activation, **kwargs):
     """
     This is basically the output of the dot product.
     The activation is a linear transformation. Now we'll be feeding it to get a non-linear output.
@@ -79,20 +83,47 @@ def transfer(activation):
     """
     # TODO: Add various options for transfer functions sigmoid, tanh, relu, etc.
     # We're implementing sigmoid here.
-    transfer_value = 1.0 / (1.0 + exp(-activation))
+    round_precision = kwargs.get("round_precision", _ROUND_PRECISION)
+    transfer_value = round(1.0 / (1.0 + exp(-activation)), round_precision)
     return transfer_value
 
 
-def forward_propagate(x, y):
+def forward_propagate(network, row_x, **kwargs):
     """
     It has three steps:
     1. Neuron Activation
     2. Neuron Transfer
     3. Forward propagation
-    @param x:
-    @param y:
+
+    @param network:
+    @param row_x:
+    @param kwargs:
     @return:
     """
+    output_history = kwargs.get("output_history", "last")
+    all_layer_outputs = []
+    for layer in network:
+        layer_output = []
+
+        for neuron in layer:
+            # row_x is original input row initially
+            activation = activate(neuron['weights'], row_x)
+
+            # Save the output of this neuron (?)
+            neuron['output'] = transfer(activation)
+            layer_output.append(neuron['output'])
+
+        # Track the history of activations (just in case you want to study more)
+        # We can add a variation here to return outputs of some particular hidden layer based on name/order number
+        all_layer_outputs.append(layer_output)
+
+        # As we progress the computations it is updated to the recent layer outputs to feed as input to next layer
+        row_x = layer_output.copy()
+
+    if output_history == 'last':
+        return all_layer_outputs[-1]
+    else:
+        return all_layer_outputs
 
 
 def back_propagate_error():
