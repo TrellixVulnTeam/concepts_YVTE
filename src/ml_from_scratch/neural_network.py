@@ -14,6 +14,7 @@ More resources:
 
 """
 
+from math import exp
 from random import random, seed
 
 _ROUND_PRECISION = 3
@@ -54,9 +55,40 @@ def initialize_network(n_inputs, n_hidden, n_outputs):
     return netowrk
 
 
+def activate(weights: list, inputs: list):
+    """
+    This will calculate the dot product of weights and inputs and add a bias value.
+    In our case, bias is always assumed to be the last value in the weights list.
+    @param weights:
+    @param inputs:
+    @return:
+    """
+    # Initialize the sum with bias.
+    sum = weights[-1]
+    for i, x_i in inputs:
+        sum += x_i * weights[i]
+    return sum
+
+
+def transfer(activation):
+    """
+    This is basically the output of the dot product.
+    The activation is a linear transformation. Now we'll be feeding it to get a non-linear output.
+    @param activation:
+    @return:
+    """
+    # TODO: Add various options for transfer functions sigmoid, tanh, relu, etc.
+    # We're implementing sigmoid here.
+    transfer_value = 1.0 / (1.0 + exp(-activation))
+    return transfer_value
+
+
 def forward_propagate(x, y):
     """
-
+    It has three steps:
+    1. Neuron Activation
+    2. Neuron Transfer
+    3. Forward propagation
     @param x:
     @param y:
     @return:
