@@ -126,6 +126,19 @@ def forward_propagate(network, row_x, **kwargs):
         return all_layer_outputs
 
 
+def transfer_derivative(output):
+    """
+    This function implements derivative of sigmoid function.
+    Need to understand the steps of derivative and apply it for other functions.
+    As the activation transfer function changes, derivative also needs to change.
+    @param output:
+    @return:
+    """
+    derivative = output * (1.0 - output)
+    derivative = round(derivative, _ROUND_PRECISION)
+    return derivative
+
+
 def back_propagate_error():
     pass
 
