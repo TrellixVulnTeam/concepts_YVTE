@@ -139,8 +139,34 @@ def transfer_derivative(output):
     return derivative
 
 
-def back_propagate_error():
-    pass
+def back_propagate_error(network, expected):
+    """
+    This will calculate the backward propagated errors from the expected output and stores in neurons
+    @param network: list of layers where a layer is a list of neurons
+    @param expected: list of expected values at the output layer
+    @return:
+    """
+    for ith in reversed(range(len(network))):
+        layer = network[ith]
+        errors = list()
+        if ith == len(network) - 1:
+            # This part is implemented for the output layer
+            for jth in range(len(layer)):
+                neuron = layer[jth]
+                errors.append(expected[jth] - neuron['output'])
+        else:
+            # This is for the hidden layers
+            # Here the error is based upon it's contribution to the next layer's neuron's outputs
+            # Hence, weighted error back propagation
+            for jth in range(len(layer)):
+                weighted_error = 0.0
+                for neuron in network[ith + 1]:
+                    weighted_error += (neuron['weights'][jth] * neuron['delta'])
+                errors.append(weighted_error)
+        for kth in range(len(layer)):
+            neuron = layer[kth]
+            neuron['delta'] = errors[kth] * transfer_derivative(neuron['output'])
+    return network
 
 
 def train_network():
