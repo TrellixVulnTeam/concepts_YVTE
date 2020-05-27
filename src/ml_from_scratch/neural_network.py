@@ -17,7 +17,7 @@ More resources:
 from math import exp
 from random import random, seed
 
-_ROUND_PRECISION = 3
+_ROUND_PRECISION = 16
 _RANDOM_SEED = 1
 seed(_RANDOM_SEED)
 
@@ -88,7 +88,7 @@ def transfer(activation, **kwargs):
     return transfer_value
 
 
-def forward_propagate(network, row_x, **kwargs):
+def forward_propagate(network, row_x, **kwargs) -> list:
     """
     It has three steps:
     1. Neuron Activation
@@ -169,8 +169,48 @@ def back_propagate_error(network, expected):
     return network
 
 
-def train_network():
-    pass
+def update_weights(network, row, learn_rate):
+    """
+    This basically updates the weights by using the neuron['delta'] that is calculated after the back-prop step.
+    @param network:
+    @param row:
+    @param learn_rate:
+    @return:
+    """
+    for ith in range(len(network)):
+        inputs = row[:-1]
+        if ith != 0:
+            inputs = [neuron['output'] for neuron in network[ith]]
+        for neuron in network[ith]:
+            for jth in range(len(inputs)):
+                neuron['weights'][jth] += learn_rate * neuron['delta'] * inputs[jth]
+            neuron['weights'][-1] += learn_rate * neuron['delta']
+
+
+def train_network(network, train, learn_rate, n_epoch, n_outputs):
+    """
+
+    Training of network has two steps:
+    1. Updating the model weights based on input
+    2. Doing it repeatedly
+
+    @param network:
+    @param train:
+    @param learn_rate:
+    @param n_epoch:
+    @param n_outputs:
+    @return:
+    """
+    for epoch in range(n_epoch):
+        sum_errors = 0.0
+        for row in train:
+            outputs = forward_propagate(network, row)
+            expected = [0 for i in range(n_outputs)]
+            expected[row[-1]] = 1
+            sum_errors += sum([(expected[i] - outputs[i]) ** 2 for i in range(len(expected))])
+            back_propagate_error(network, expected)
+            update_weights(network, row, learn_rate)
+        print(f"epoch: {epoch}, learn_rate: {learn_rate}, error: {sum_errors}")
 
 
 def predict():
