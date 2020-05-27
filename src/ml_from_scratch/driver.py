@@ -49,7 +49,7 @@ def test_training():
     n_inputs = len(dataset[0]) - 1
     n_outputs = len(set([row[-1] for row in dataset]))
     network = nn.initialize_network(n_inputs, 2, n_outputs)
-    nn.train_network(network, dataset, 0.5, 20, n_outputs)
+    nn.train_network(network, dataset, 0.5, 47, n_outputs)
     for layer in network:
         print(layer)
 
