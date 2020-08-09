@@ -8,3 +8,4 @@ src/.DS_Store
 .DS_Store
 /src/data/txts/metamorphosis_clean.txt
 /src/data/txts/seeds_dataset.csv
+/src/handle_pdfs/data/
