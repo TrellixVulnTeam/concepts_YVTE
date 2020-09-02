@@ -42,10 +42,21 @@ def egyptian_fraction(nr, dr):
             print(" 1/{0}".
                   format(ef[i]), end=" ")
 
-        # calling the function 
+        # calling the function
+    print(f"\n{''.join(['-'] * 100)}")
 
 
 egyptian_fraction(6, 14)
+
+egyptian_fraction(2, 3)
+
+egyptian_fraction(101, 174)
+
+egyptian_fraction(13, 174)
+
+egyptian_fraction(100, 25)
+
+egyptian_fraction(100, 27)
 
 # This code is contributed
 # by Anubhav Raj Singh
