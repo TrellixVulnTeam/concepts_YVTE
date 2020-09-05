@@ -24,8 +24,8 @@ from matplotlib import pyplot as plt
 
 
 # objective function
-def objective(x, noise=0.1):
-    noise = normal(loc=0, scale=noise)
+def objective(x, noise_scale=0.1):
+    noise = normal(loc=0, scale=noise_scale)
     return (x ** 2 * sin(5 * pi * x) ** 6.0) + noise
 
 
