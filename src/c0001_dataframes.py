@@ -76,12 +76,12 @@ def loc_vs_iloc():
     This function illustrated the usage of .loc vs .iloc in pandas DataFrames
     :return:
     """
-    list_records = [{"a": i * 10, "b": i % 2} for i in range(10)]
+    list_records = [{"a": i * 10, "b": i % 2} for i in range(20)]
     df = pd.DataFrame.from_records(list_records)
     cond_even = df["b"] == 0
     df_even = df[cond_even]
-    print(f"df_even loc: 0:4 \n{df_even.loc[0:4]} ")
-    print(f"df_even iloc: 0:4 \n{df_even.iloc[0:4]} ")
+    print(f"df_even loc: 0:4 \n{df_even.loc[0:5]} ")
+    print(f"df_even iloc: 0:4 \n{df_even.iloc[0:5]} ")
 
     print(f"df loc: 0:10 \n{df.loc[0:10]} ")
     print(f"df iloc: 1:10:2 \n{df.loc[1:10:2]} ")
