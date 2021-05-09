@@ -4,6 +4,7 @@ Audience: Beginners -> Advanced
 @author: Shreedhar Kodate
 """
 import pandas as pd
+import traceback
 
 
 def print_df(df: pd.DataFrame) -> None:
@@ -70,6 +71,34 @@ def copy_df(df):
     df_tmp = df.copy()
 
 
+def loc_vs_iloc():
+    """
+    This function illustrated the usage of .loc vs .iloc in pandas DataFrames
+    :return:
+    """
+    list_records = [{"a": i * 10, "b": i % 2} for i in range(10)]
+    df = pd.DataFrame.from_records(list_records)
+    cond_even = df["b"] == 0
+    df_even = df[cond_even]
+    print(f"df_even loc: 0:4 \n{df_even.loc[0:4]} ")
+    print(f"df_even iloc: 0:4 \n{df_even.iloc[0:4]} ")
+
+    print(f"df loc: 0:10 \n{df.loc[0:10]} ")
+    print(f"df iloc: 1:10:2 \n{df.loc[1:10:2]} ")
+
+    print(f"df_even iloc: 1 \n{df_even.iloc[1]} ")
+    try:
+        print(f"df_even loc: 1 \n{df_even.loc[1]} ")
+    except KeyError:
+        print(f"Exception expected because index 1 is not present in df_even")
+        print(f"However, df has index 1: \n{df.loc[1]}")
+        # print(traceback.print_exc())
+
+    print(f"df_even iloc: 1 \n{df_even[df_even.index==0]} ")
+
+    print(":p")
+
+
 def df_reset_index(df):
     """
     Code to reset the index i.e. row numbers
@@ -83,9 +112,15 @@ def df_reset_index(df):
 
 
 def invocations():
-    # df1 = create_dataframe_from_dict_of_dict()
-    # print_df(df1)
-    pass
+    df1 = create_dataframe_from_dict_of_dict()
+    print_df(df1)
+    df = create_dataframe_from_dict()
+    print_df(df)
+    df = sort_df(df, ['col2', 'col1'], [False, True])
+    print_df(df)
+    df = df_reset_index(df)
+    print_df(df)
+    loc_vs_iloc()
 
 
 def main():
@@ -93,12 +128,7 @@ def main():
 
     :return:
     """
-    df = create_dataframe_from_dict()
-    print_df(df)
-    df = sort_df(df, ['col2', 'col1'], [False, True])
-    print_df(df)
-    df = df_reset_index(df)
-    print_df(df)
+    loc_vs_iloc()
 
 
 if __name__ == '__main__':
